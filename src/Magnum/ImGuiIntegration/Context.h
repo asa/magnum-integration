@@ -39,7 +39,7 @@
 #include <Magnum/GL/Texture.h>
 #include <Magnum/GL/Buffer.h>
 #include <Magnum/GL/Mesh.h>
-#include <Magnum/Shaders/FlatGL.h>
+#include <Magnum/Shaders/Flat.h>
 
 #include "Magnum/ImGuiIntegration/visibility.h"
 
@@ -583,7 +583,7 @@ class MAGNUM_IMGUIINTEGRATION_EXPORT Context {
 
     private:
         ImGuiContext* _context;
-        Shaders::FlatGL2D _shader;
+        Shaders::Flat2D _shader;
         GL::Texture2D _texture{NoCreate};
         GL::Buffer _vertexBuffer{GL::Buffer::TargetHint::Array};
         GL::Buffer _indexBuffer{GL::Buffer::TargetHint::ElementArray};
@@ -591,7 +591,7 @@ class MAGNUM_IMGUIINTEGRATION_EXPORT Context {
         GL::Mesh _mesh;
         Vector2 _supersamplingRatio,
             _eventScaling;
-        BitVector3 _mousePressed, _mousePressedInThisFrame;
+        BoolVector3 _mousePressed, _mousePressedInThisFrame;
 
     private:
         template<class KeyEvent> bool handleKeyEvent(KeyEvent& event, bool value);

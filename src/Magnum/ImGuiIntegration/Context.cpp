@@ -55,11 +55,7 @@ Context::Context(const Vector2& size, const Vector2i& windowSize, const Vector2i
 
 Context::Context(const Vector2i& size): Context{Vector2{size}, size, size} {}
 
-Context::Context(ImGuiContext& context, const Vector2& size, const Vector2i& windowSize, const Vector2i& framebufferSize):
-    _context{&context},
-    _shader{Shaders::FlatGL2D::Configuration{}
-        .setFlags(Shaders::FlatGL2D::Flag::Textured|Shaders::FlatGL2D::Flag::VertexColor)}
-{
+Context::Context(ImGuiContext& context, const Vector2& size, const Vector2i& windowSize, const Vector2i& framebufferSize): _context{&context}, _shader{Shaders::Flat2D::Flag::Textured|Shaders::Flat2D::Flag::VertexColor} {
     /* Ensure we use the context we're linked to */
     ImGui::SetCurrentContext(&context);
 
@@ -114,11 +110,11 @@ Context::Context(ImGuiContext& context, const Vector2& size, const Vector2i& win
 
     _mesh.setPrimitive(GL::MeshPrimitive::Triangles);
     _mesh.addVertexBuffer(_vertexBuffer, 0,
-        Shaders::FlatGL2D::Position{},
-        Shaders::FlatGL2D::TextureCoordinates{},
-        Shaders::FlatGL2D::Color4{
-            Shaders::FlatGL2D::Color4::DataType::UnsignedByte,
-            Shaders::FlatGL2D::Color4::DataOption::Normalized});
+        Shaders::Flat2D::Position{},
+        Shaders::Flat2D::TextureCoordinates{},
+        Shaders::Flat2D::Color4{
+            Shaders::Flat2D::Color4::DataType::UnsignedByte,
+            Shaders::Flat2D::Color4::DataOption::Normalized});
 
     _timeline.start();
 }
@@ -127,7 +123,7 @@ Context::Context(ImGuiContext& context, const Vector2i& size): Context{context, 
 
 Context::Context(NoCreateT) noexcept: _context{nullptr}, _shader{NoCreate}, _texture{NoCreate}, _vertexBuffer{NoCreate}, _indexBuffer{NoCreate}, _mesh{NoCreate} {}
 
-Context::Context(Context&& other) noexcept: _context{other._context}, _shader{Utility::move(other._shader)}, _texture{Utility::move(other._texture)}, _vertexBuffer{Utility::move(other._vertexBuffer)}, _indexBuffer{Utility::move(other._indexBuffer)}, _timeline{Utility::move(other._timeline)}, _mesh{Utility::move(other._mesh)}, _supersamplingRatio{other._supersamplingRatio}, _eventScaling{other._eventScaling} {
+Context::Context(Context&& other) noexcept: _context{other._context}, _shader{std::move(other._shader)}, _texture{std::move(other._texture)}, _vertexBuffer{std::move(other._vertexBuffer)}, _indexBuffer{std::move(other._indexBuffer)}, _timeline{std::move(other._timeline)}, _mesh{std::move(other._mesh)}, _supersamplingRatio{other._supersamplingRatio}, _eventScaling{other._eventScaling} {
     other._context = nullptr;
     /* Update the pointer to _texture */
     ImGuiContext* current = ImGui::GetCurrentContext();
@@ -145,16 +141,15 @@ Context::~Context() {
 }
 
 Context& Context::operator=(Context&& other) noexcept {
-    using Utility::swap;
-    swap(_context, other._context);
-    swap(_shader, other._shader);
-    swap(_texture, other._texture);
-    swap(_vertexBuffer, other._vertexBuffer);
-    swap(_indexBuffer, other._indexBuffer);
-    swap(_timeline, other._timeline);
-    swap(_mesh, other._mesh);
-    swap(_supersamplingRatio, other._supersamplingRatio);
-    swap(_eventScaling, other._eventScaling);
+    std::swap(_context, other._context);
+    std::swap(_shader, other._shader);
+    std::swap(_texture, other._texture);
+    std::swap(_vertexBuffer, other._vertexBuffer);
+    std::swap(_indexBuffer, other._indexBuffer);
+    std::swap(_timeline, other._timeline);
+    std::swap(_mesh, other._mesh);
+    std::swap(_supersamplingRatio, other._supersamplingRatio);
+    std::swap(_eventScaling, other._eventScaling);
 
     /* Update the pointers to _texture */
     ImGuiContext* current = ImGui::GetCurrentContext();
